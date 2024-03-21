@@ -21,3 +21,4 @@ node_modules
 .jest
 .cache
 package-lock.json
+.idea
