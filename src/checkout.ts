@@ -1,4 +1,4 @@
-import {Product, ProductBuyMultipleGetFree} from './product';
+import {Product, ProductBuyMultipleGetFree, ProductPercentageDiscount} from './product';
 import { Receipt, ReceiptItem } from './receipt';
 
 export class Checkout {
@@ -51,6 +51,14 @@ export class Checkout {
                             freeItemAddedCount = 0;
                         }
                     }
+                }
+            } else if (product instanceof ProductPercentageDiscount) {
+                // calculate total price as usual
+                totalPrice += product.price * quantity;
+                // check if quantity triggers discount
+                if (quantity >= product.totalToTriggerDiscount) {
+                    // if so then apply percentage discount to all products
+                    totalPrice = totalPrice - ((totalPrice / 100) * product.percentageDiscount);
                 }
             } else {
                 // if standard Product calculate the price based on quantity
