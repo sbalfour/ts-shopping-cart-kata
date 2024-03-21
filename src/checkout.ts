@@ -1,4 +1,4 @@
-import { Product } from './product';
+import {Product, ProductBuyMultipleGetFree} from './product';
 import { Receipt, ReceiptItem } from './receipt';
 
 export class Checkout {
@@ -28,8 +28,36 @@ export class Checkout {
             const product: Product = products[0];
             // get the quantity added by getting the Product array length
             const quantity: number = products.length;
+
             // add calculation of price by quantity to the totalPrice
-            totalPrice += product.price * quantity;
+            // check class instanceof for specific calculations
+            if (product instanceof ProductBuyMultipleGetFree) {
+                // initial counts for ProductBuyMultipleGetFree value checks
+                let freeItemTriggerCount: number = 0;
+                let freeItemAddedCount: number = 0;
+                // loop through all items based on quantity value
+                for(let i: number = 0; i < quantity; i++) {
+                    // check if totalToTriggerFree has been reached
+                    if (freeItemTriggerCount < product.totalToTriggerFree) {
+                        // if not add price to total price and add 1 to freeItemTriggerCount
+                        totalPrice += product.price;
+                        freeItemTriggerCount++;
+                    } else {
+                        // if it has then this is a free item and no calculation of total price
+                        freeItemAddedCount++;
+                        // if the total of free items available have been added the reset the counts
+                        if (freeItemAddedCount === product.totalFree) {
+                            freeItemTriggerCount = 0;
+                            freeItemAddedCount = 0;
+                        }
+                    }
+                }
+            } else {
+                // if standard Product calculate the price based on quantity
+                totalPrice += product.price * quantity;
+            }
+
+
             // add product and quantity to the receiptItems as a ReceiptItem
             receiptItems = [...receiptItems, ...[{
                 product,
