@@ -16,6 +16,7 @@ export class Receipt {
     ) {
         // populate readonly properties through constructor parameters
         this.items = items;
-        this.totalPrice = totalPrice;
+        // convert pence to pounds and pence eg. 1000 to 10.00
+        this.totalPrice = Number((totalPrice / 100).toFixed(2));
     }
 }

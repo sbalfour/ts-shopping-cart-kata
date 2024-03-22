@@ -26,7 +26,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         });
 
         it('Then the receipt total price should be zero', () => {
-            expect(receipt.totalPrice).toEqual(0);
+            expect(receipt.totalPrice).toEqual(0.00);
         });
 
     });
@@ -37,7 +37,8 @@ describe('Given a customer is shopping at the supermarket', () => {
 
         beforeEach(() => {
             const checkout = new Checkout();
-            checkout.scanItem(new Product('Apple', 0.3));
+            // handle floating point precision issues by switching to pence eg. 30 instead of 0.3
+            checkout.scanItem(new Product('Apple', 30));
             receipt = checkout.generateReceipt();
         });
 
@@ -54,7 +55,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         });
 
         it('Then the receipt total price should be calculated correctly', () => {
-            expect(receipt.totalPrice).toEqual(0.3);
+            expect(receipt.totalPrice).toEqual(0.30);
         });
 
     });
@@ -65,8 +66,8 @@ describe('Given a customer is shopping at the supermarket', () => {
 
         beforeEach(() => {
             const checkout = new Checkout();
-            checkout.scanItem(new Product('Apple', 0.3));
-            checkout.scanItem(new Product('Orange', 0.4));
+            checkout.scanItem(new Product('Apple', 30));
+            checkout.scanItem(new Product('Orange', 40));
             receipt = checkout.generateReceipt();
         });
 
@@ -91,7 +92,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         });
 
         it('Then the receipt total price should be calculated correctly', () => {
-            expect(receipt.totalPrice).toEqual(0.7);
+            expect(receipt.totalPrice).toEqual(0.70);
         });
 
     });
@@ -103,10 +104,10 @@ describe('Given a customer is shopping at the supermarket', () => {
         beforeEach(() => {
             const checkout = new Checkout();
             for(let i = 0; i < 3; i++) {
-                checkout.scanItem(new Product('Apple', 0.3));
+                checkout.scanItem(new Product('Apple', 30));
             }
             for(let i = 0; i < 2; i++) {
-                checkout.scanItem(new Product('Orange', 0.4));
+                checkout.scanItem(new Product('Orange', 40));
             }
             receipt = checkout.generateReceipt();
         });
@@ -132,7 +133,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         });
 
         it('Then the receipt total price should be calculated correctly', () => {
-            expect(receipt.totalPrice).toEqual((3 * 0.3) + (2 * 0.4));
+            expect(receipt.totalPrice).toEqual(1.70);
         });
 
     });
@@ -144,7 +145,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         beforeEach(() => {
             const checkout = new Checkout();
             for(let i = 0; i < 6; i++) {
-                checkout.scanItem(new ProductBuyMultipleGetFree('Toothbrush', 0.3, 2, 1));
+                checkout.scanItem(new ProductBuyMultipleGetFree('Toothbrush', 30, 2, 1));
             }
             receipt = checkout.generateReceipt();
         });
@@ -162,7 +163,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         });
 
         it('Then the receipt total price should be calculated correctly', () => {
-            expect(receipt.totalPrice).toEqual((4 * 0.3));
+            expect(receipt.totalPrice).toEqual(1.20);
         });
 
     });
@@ -174,7 +175,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         beforeEach(() => {
             const checkout = new Checkout();
             for(let i = 0; i < 5; i++) {
-                checkout.scanItem(new ProductBuyMultipleGetFree('Toothbrush', 0.3, 4, 1));
+                checkout.scanItem(new ProductBuyMultipleGetFree('Toothbrush', 30, 4, 1));
             }
             receipt = checkout.generateReceipt();
         });
@@ -192,7 +193,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         });
 
         it('Then the receipt total price should be calculated correctly', () => {
-            expect(receipt.totalPrice).toEqual((4 * 0.3));
+            expect(receipt.totalPrice).toEqual(1.20);
         });
 
     });
@@ -204,10 +205,10 @@ describe('Given a customer is shopping at the supermarket', () => {
         beforeEach(() => {
             const checkout = new Checkout();
             for(let i = 0; i < 3; i++) {
-                checkout.scanItem(new ProductBuyMultipleGetFree('Toothbrush', 0.3, 2, 1));
+                checkout.scanItem(new ProductBuyMultipleGetFree('Toothbrush', 30, 2, 1));
             }
-            checkout.scanItem(new Product('Apple', 0.3));
-            checkout.scanItem(new Product('Orange', 0.4));
+            checkout.scanItem(new Product('Apple', 30));
+            checkout.scanItem(new Product('Orange', 40));
             receipt = checkout.generateReceipt();
         });
 
@@ -240,7 +241,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         });
 
         it('Then the receipt total price should be calculated correctly', () => {
-            expect(receipt.totalPrice).toEqual((2 * 0.3) + 0.3 + 0.4);
+            expect(receipt.totalPrice).toEqual(1.30);
         });
 
     });
@@ -252,10 +253,10 @@ describe('Given a customer is shopping at the supermarket', () => {
         beforeEach(() => {
             const checkout = new Checkout();
             for(let i = 0; i < 5; i++) {
-                checkout.scanItem(new ProductBuyMultipleGetFree('Toothbrush', 0.3, 4, 1));
+                checkout.scanItem(new ProductBuyMultipleGetFree('Toothbrush', 30, 4, 1));
             }
             for(let i = 0; i < 3; i++) {
-                checkout.scanItem(new ProductBuyMultipleGetFree('Toothpaste', 0.3, 2, 1));
+                checkout.scanItem(new ProductBuyMultipleGetFree('Toothpaste', 30, 2, 1));
             }
             receipt = checkout.generateReceipt();
         });
@@ -281,7 +282,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         });
 
         it('Then the receipt total price should be calculated correctly', () => {
-            expect(receipt.totalPrice).toEqual(1.8);
+            expect(receipt.totalPrice).toEqual(1.80);
         });
 
     });
@@ -292,7 +293,7 @@ describe('Given a customer is shopping at the supermarket', () => {
 
         beforeEach(() => {
             const checkout = new Checkout();
-            checkout.scanItem(new ProductPercentageDiscount('Rice', 1.0, 1, 10));
+            checkout.scanItem(new ProductPercentageDiscount('Rice', 100, 1, 10));
             receipt = checkout.generateReceipt();
         });
 
@@ -309,7 +310,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         });
 
         it('Then the receipt total price should be calculated correctly', () => {
-            expect(receipt.totalPrice).toEqual(0.9);
+            expect(receipt.totalPrice).toEqual(0.90);
         });
 
     });
@@ -321,7 +322,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         beforeEach(() => {
             const checkout = new Checkout();
             for(let i = 0; i < 12; i++) {
-                checkout.scanItem(new ProductPercentageDiscount('Apple', 1.0, 11, 20));
+                checkout.scanItem(new ProductPercentageDiscount('Apple', 100, 11, 20));
             }
             receipt = checkout.generateReceipt();
         });
@@ -339,7 +340,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         });
 
         it('Then the receipt total price should be calculated correctly', () => {
-            expect(receipt.totalPrice).toEqual(9.6);
+            expect(receipt.totalPrice).toEqual(9.60);
         });
 
     });
@@ -351,7 +352,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         beforeEach(() => {
             const checkout = new Checkout();
             for(let i = 0; i < 9; i++) {
-                checkout.scanItem(new ProductPercentageDiscount('Apple', 1.0, 11, 20));
+                checkout.scanItem(new ProductPercentageDiscount('Apple', 100, 11, 20));
             }
             receipt = checkout.generateReceipt();
         });
@@ -369,7 +370,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         });
 
         it('Then the receipt total price should be calculated correctly', () => {
-            expect(receipt.totalPrice).toEqual(9.0);
+            expect(receipt.totalPrice).toEqual(9.00);
         });
 
     });
@@ -381,10 +382,10 @@ describe('Given a customer is shopping at the supermarket', () => {
         beforeEach(() => {
             const checkout = new Checkout();
             for(let i = 0; i < 5; i++) {
-                checkout.scanItem(new ProductPercentageDiscount('Apple', 1.0, 4, 20));
+                checkout.scanItem(new ProductPercentageDiscount('Apple', 100, 4, 20));
             }
             for(let i = 0; i < 4; i++) {
-                checkout.scanItem(new ProductPercentageDiscount('Orange', 1.0, 3, 10));
+                checkout.scanItem(new ProductPercentageDiscount('Orange', 100, 3, 10));
             }
             receipt = checkout.generateReceipt();
         });
@@ -410,7 +411,7 @@ describe('Given a customer is shopping at the supermarket', () => {
         });
 
         it('Then the receipt total price should be calculated correctly', () => {
-            expect(receipt.totalPrice).toEqual(7.6);
+            expect(receipt.totalPrice).toEqual(7.60);
         });
 
     });
